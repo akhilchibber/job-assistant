@@ -39,7 +39,9 @@ def scraper_agent(state: dict) -> dict:
         state["jd_text"] = text[:6000]
         state["scrape_status"] = "success"
     except Exception as e:
-        state["jd_text"] = ""
+        # Preserve any existing jd_text — don't blank it out on error
+        if not state.get("jd_text"):
+            state["jd_text"] = ""
         state["scrape_status"] = f"error: {str(e)}"
     return state
 
