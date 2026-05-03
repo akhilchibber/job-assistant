@@ -9,51 +9,45 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f7fa;
+      background: #f0f2f8;
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: 2rem;
+      padding: 2.5rem 1rem;
     }
 
     .card {
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      border-radius: 14px;
+      box-shadow: 0 4px 28px rgba(0,0,0,0.09);
       padding: 2.5rem;
       width: 100%;
-      max-width: 580px;
+      max-width: 620px;
     }
 
     .header { margin-bottom: 2rem; }
-    h1 { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.3rem; }
-    .subtitle { font-size: 0.9rem; color: #666; line-height: 1.5; }
+    h1 { font-size: 1.45rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.35rem; }
+    .subtitle { font-size: 0.9rem; color: #666; line-height: 1.55; }
 
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 0.4rem;
-    }
+    label { display: block; font-size: 0.83rem; font-weight: 600; color: #444; margin-bottom: 0.4rem; }
 
     input[type="text"], input[type="email"] {
       width: 100%;
-      padding: 0.65rem 0.9rem;
+      padding: 0.68rem 0.95rem;
       border: 1.5px solid #ddd;
       border-radius: 8px;
       font-size: 0.95rem;
       margin-bottom: 1.2rem;
-      transition: border-color 0.2s;
       outline: none;
       color: #1a1a2e;
+      transition: border-color 0.2s;
     }
     input:focus { border-color: #4f46e5; }
 
     button#generateBtn {
       width: 100%;
-      padding: 0.8rem;
+      padding: 0.82rem;
       background: #4f46e5;
       color: #fff;
       border: none;
@@ -61,70 +55,98 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      transition: background 0.2s;
     }
     button#generateBtn:hover:not(:disabled) { background: #4338ca; }
     button#generateBtn:disabled { background: #a5b4fc; cursor: not-allowed; }
 
-    /* Spinner inside button */
     .btn-spinner {
       display: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.4);
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.35);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-      flex-shrink: 0;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Timer */
-    .timer {
-      display: none;
-      margin-top: 0.8rem;
-      font-size: 0.85rem;
-      color: #888;
-      text-align: center;
-    }
+    .timer { display: none; margin-top: 0.7rem; font-size: 0.83rem; color: #999; text-align: center; }
 
-    /* Status box */
-    .status-box { margin-top: 1.8rem; display: none; }
-    .status-box h2 {
-      font-size: 0.8rem;
+    /* ── Pipeline visualiser ── */
+    .pipeline-section { margin-top: 2rem; display: none; }
+
+    .pipeline-title {
+      font-size: 0.78rem;
       font-weight: 700;
       color: #888;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.8rem;
+      letter-spacing: 0.07em;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .pipeline-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #eee;
     }
 
-    .status-list {
-      list-style: none;
+    .agent-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .agent-card {
       display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1.5px solid #eee;
+      background: #fafafa;
+      transition: all 0.25s;
+      opacity: 0.45;
     }
-    .status-list li {
-      font-size: 0.9rem;
-      color: #333;
-      padding: 0.4rem 0.6rem;
-      background: #f8fafc;
-      border-radius: 6px;
-      border-left: 3px solid #4f46e5;
+    .agent-card.active {
+      opacity: 1;
+      border-color: #818cf8;
+      background: #eef2ff;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
     }
-    .status-list li.email-line { border-left-color: #10b981; }
-    .status-list li.skip-line  { border-left-color: #f59e0b; }
+    .agent-card.done  { opacity: 1; border-color: #6ee7b7; background: #f0fdf4; }
+    .agent-card.error { opacity: 1; border-color: #fca5a5; background: #fef2f2; }
+
+    .agent-icon { font-size: 1.4rem; flex-shrink: 0; width: 2rem; text-align: center; }
+
+    .agent-info { flex: 1; min-width: 0; }
+    .agent-name { font-size: 0.9rem; font-weight: 600; color: #1a1a2e; }
+    .agent-msg  { font-size: 0.8rem; color: #666; margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .agent-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 99px;
+      flex-shrink: 0;
+    }
+    .badge-waiting  { background: #f1f5f9; color: #94a3b8; }
+    .badge-running  { background: #e0e7ff; color: #4f46e5; animation: pulse 1.2s ease-in-out infinite; }
+    .badge-done     { background: #d1fae5; color: #065f46; }
+    .badge-error    { background: #fee2e2; color: #991b1b; }
+    .badge-skipped  { background: #fef9c3; color: #854d0e; }
+
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.55; } }
+
+    /* ── Result area ── */
+    .result-area { margin-top: 1.5rem; display: none; }
 
     .download-btn {
-      display: none;
-      margin-top: 1.4rem;
+      display: block;
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.78rem;
       background: #10b981;
       color: #fff;
       border-radius: 8px;
@@ -133,8 +155,18 @@
       text-decoration: none;
       text-align: center;
       transition: background 0.2s;
+      margin-bottom: 0.7rem;
     }
     .download-btn:hover { background: #059669; }
+
+    .email-status {
+      font-size: 0.85rem;
+      color: #555;
+      text-align: center;
+      padding: 0.5rem;
+      background: #f8fafc;
+      border-radius: 6px;
+    }
 
     .error-msg {
       margin-top: 1rem;
@@ -146,154 +178,220 @@
       font-size: 0.9rem;
       display: none;
     }
-
-    .divider {
-      border: none;
-      border-top: 1px solid #eee;
-      margin: 1.5rem 0 0;
-    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="header">
-      <h1>🤖 AI Job Application Assistant</h1>
-      <p class="subtitle">Paste a job posting URL. The system will generate a tailored cover letter and email it to the hiring contact automatically.</p>
-    </div>
-
-    <label for="jobUrl">Job Posting URL</label>
-    <input type="text" id="jobUrl" placeholder="https://company.com/jobs/software-engineer" />
-
-    <label for="senderEmail">Send from (Gmail)</label>
-    <input type="email" id="senderEmail" value="rishika3895@gmail.com" />
-
-    <button id="generateBtn" onclick="generate()">
-      <span class="btn-spinner" id="btnSpinner"></span>
-      <span id="btnText">Generate &amp; Send Application</span>
-    </button>
-
-    <p class="timer" id="timer">Processing... <span id="elapsed">0</span>s</p>
-
-    <div class="error-msg" id="errorMsg"></div>
-
-    <div class="status-box" id="statusBox">
-      <hr class="divider" />
-      <h2>Pipeline Status</h2>
-      <ul class="status-list" id="statusList"></ul>
-      <a id="downloadBtn" class="download-btn" href="#" target="_blank">
-        ⬇ Download Cover Letter PDF
-      </a>
-    </div>
+<div class="card">
+  <div class="header">
+    <h1>🤖 AI Job Application Assistant</h1>
+    <p class="subtitle">Paste a job posting URL. The multi-agent system will generate a tailored cover letter and email it to the hiring contact automatically.</p>
   </div>
 
-  <script>
-    // -----------------------------------------------------------------------
-    // CONFIG
-    // -----------------------------------------------------------------------
-    const BACKEND_URL = "https://akhilchibber-job-assistant.hf.space";
+  <label for="jobUrl">Job Posting URL</label>
+  <input type="text" id="jobUrl" placeholder="https://company.com/jobs/software-engineer" />
 
-    // -----------------------------------------------------------------------
-    // Timer
-    // -----------------------------------------------------------------------
-    let timerInterval = null;
-    let startTime = null;
+  <label for="senderEmail">Send from (Gmail)</label>
+  <input type="email" id="senderEmail" value="rishika3895@gmail.com" />
 
-    function startTimer() {
-      startTime = Date.now();
-      document.getElementById("timer").style.display = "block";
-      timerInterval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        document.getElementById("elapsed").textContent = elapsed;
-      }, 1000);
+  <button id="generateBtn" onclick="generate()">
+    <span class="btn-spinner" id="btnSpinner"></span>
+    <span id="btnText">Generate &amp; Send Application</span>
+  </button>
+
+  <p class="timer" id="timer">Running pipeline... <span id="elapsed">0</span>s</p>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- Live agent pipeline visualiser -->
+  <div class="pipeline-section" id="pipelineSection">
+    <div class="pipeline-title">Multi-Agent Pipeline</div>
+    <div class="agent-list" id="agentList"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-area" id="resultArea">
+    <a id="downloadBtn" class="download-btn" href="#" target="_blank">⬇ Download Cover Letter PDF</a>
+    <div class="email-status" id="emailStatusMsg"></div>
+  </div>
+</div>
+
+<script>
+  // -----------------------------------------------------------------------
+  // CONFIG
+  // -----------------------------------------------------------------------
+  const BACKEND_URL = "https://akhilchibber-job-assistant.hf.space";
+
+  // Agent display order — defines the pipeline cards shown top to bottom
+  const AGENT_ORDER = [
+    { key: "supervisor",        label: "Supervisor Agent",               icon: "🧠", desc: "Orchestrates the entire pipeline" },
+    { key: "scraper",           label: "Scraper Agent",                  icon: "🔍", desc: "Fetches job posting from URL" },
+    { key: "resume_loader",     label: "Resume Loader",                  icon: "📄", desc: "Loads resume from Supabase" },
+    { key: "cover_letter",      label: "Cover Letter Agent",             icon: "✍️",  desc: "Writes tailored cover letter" },
+    { key: "pdf_export",        label: "PDF Export",                     icon: "📑", desc: "Renders cover letter to PDF" },
+    { key: "contact_extractor", label: "Contact Extractor Agent",        icon: "🔎", desc: "Extracts hiring manager contact" },
+    { key: "email_sender",      label: "Email Drafter & Sender Agent",   icon: "📧", desc: "Drafts and sends application email" },
+  ];
+
+  // -----------------------------------------------------------------------
+  // Timer
+  // -----------------------------------------------------------------------
+  let timerInterval = null;
+
+  function startTimer() {
+    const start = Date.now();
+    document.getElementById("timer").style.display = "block";
+    timerInterval = setInterval(() => {
+      document.getElementById("elapsed").textContent = Math.floor((Date.now() - start) / 1000);
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+    document.getElementById("timer").style.display = "none";
+  }
+
+  // -----------------------------------------------------------------------
+  // Build pipeline cards
+  // -----------------------------------------------------------------------
+  function buildPipelineCards() {
+    const list = document.getElementById("agentList");
+    list.innerHTML = "";
+    AGENT_ORDER.forEach(agent => {
+      const card = document.createElement("div");
+      card.className = "agent-card";
+      card.id = `card-${agent.key}`;
+      card.innerHTML = `
+        <div class="agent-icon">${agent.icon}</div>
+        <div class="agent-info">
+          <div class="agent-name">${agent.label}</div>
+          <div class="agent-msg" id="msg-${agent.key}">${agent.desc}</div>
+        </div>
+        <span class="agent-badge badge-waiting" id="badge-${agent.key}">Waiting</span>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  function setAgentState(key, status, message) {
+    const card  = document.getElementById(`card-${key}`);
+    const badge = document.getElementById(`badge-${key}`);
+    const msg   = document.getElementById(`msg-${key}`);
+    if (!card) return;
+
+    card.className = "agent-card";
+    if (status === "running") {
+      card.classList.add("active");
+      badge.className = "agent-badge badge-running";
+      badge.textContent = "Running";
+    } else if (status === "done") {
+      card.classList.add("done");
+      badge.className = "agent-badge badge-done";
+      badge.textContent = "Done";
+    } else if (status === "error") {
+      card.classList.add("error");
+      badge.className = "agent-badge badge-error";
+      badge.textContent = "Error";
+    } else if (status === "skipped") {
+      card.classList.add("done");
+      badge.className = "agent-badge badge-skipped";
+      badge.textContent = "Skipped";
     }
+    if (message) msg.textContent = message;
+  }
 
-    function stopTimer() {
-      clearInterval(timerInterval);
-      document.getElementById("timer").style.display = "none";
-    }
+  // -----------------------------------------------------------------------
+  // Main generate function — uses SSE /stream endpoint
+  // -----------------------------------------------------------------------
+  async function generate() {
+    const jobUrl      = document.getElementById("jobUrl").value.trim();
+    const senderEmail = document.getElementById("senderEmail").value.trim();
+    const errorMsg    = document.getElementById("errorMsg");
+    const btn         = document.getElementById("generateBtn");
+    const btnSpinner  = document.getElementById("btnSpinner");
+    const btnText     = document.getElementById("btnText");
+    const resultArea  = document.getElementById("resultArea");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const emailStatus = document.getElementById("emailStatusMsg");
 
-    // -----------------------------------------------------------------------
-    // Main generate function
-    // -----------------------------------------------------------------------
-    async function generate() {
-      const jobUrl     = document.getElementById("jobUrl").value.trim();
-      const senderEmail = document.getElementById("senderEmail").value.trim();
-      const errorMsg   = document.getElementById("errorMsg");
-      const statusBox  = document.getElementById("statusBox");
-      const statusList = document.getElementById("statusList");
-      const downloadBtn = document.getElementById("downloadBtn");
-      const btn        = document.getElementById("generateBtn");
-      const btnSpinner = document.getElementById("btnSpinner");
-      const btnText    = document.getElementById("btnText");
+    // Reset
+    errorMsg.style.display = "none";
+    resultArea.style.display = "none";
 
-      // Reset
-      errorMsg.style.display = "none";
-      statusBox.style.display = "none";
-      statusList.innerHTML = "";
-      downloadBtn.style.display = "none";
+    if (!jobUrl)      { showError("Please paste a job posting URL."); return; }
+    if (!senderEmail) { showError("Please enter your email address."); return; }
 
-      if (!jobUrl) { showError("Please paste a job posting URL."); return; }
-      if (!senderEmail) { showError("Please enter your email address."); return; }
+    // Build pipeline UI
+    buildPipelineCards();
+    document.getElementById("pipelineSection").style.display = "block";
 
-      // Loading state
-      btn.disabled = true;
-      btnSpinner.style.display = "block";
-      btnText.textContent = "Working…";
-      startTimer();
+    // Loading state
+    btn.disabled = true;
+    btnSpinner.style.display = "block";
+    btnText.textContent = "Running pipeline…";
+    startTimer();
 
-      try {
-        const res = await fetch(`${BACKEND_URL}/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ job_url: jobUrl, sender_email: senderEmail }),
-        });
+    try {
+      const res = await fetch(`${BACKEND_URL}/stream`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ job_url: jobUrl, sender_email: senderEmail }),
+      });
 
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.detail || "Server error");
-        }
-
-        // Render status log
-        statusBox.style.display = "block";
-        (data.status_log || []).forEach(msg => addStatus("✅ " + msg));
-
-        // Email status line
-        const emailStatus = data.email_status || "not attempted";
-        const isSkipped = emailStatus.toLowerCase().includes("skip");
-        const isFailed  = emailStatus.toLowerCase().includes("fail");
-        const emailClass = isSkipped ? "skip-line" : isFailed ? "" : "email-line";
-        const emailIcon  = isSkipped ? "⚠️" : isFailed ? "❌" : "📧";
-        addStatus(`${emailIcon} Email: ${emailStatus}`, emailClass);
-
-        // Download button
-        if (data.cover_letter_url) {
-          downloadBtn.href = data.cover_letter_url;
-          downloadBtn.style.display = "block";
-        }
-
-      } catch (err) {
-        showError("Error: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btnSpinner.style.display = "none";
-        btnText.textContent = "Generate & Send Application";
-        stopTimer();
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Server error");
       }
-    }
 
-    function addStatus(msg, extraClass = "") {
-      const li = document.createElement("li");
-      li.textContent = msg;
-      if (extraClass) li.classList.add(extraClass);
-      document.getElementById("statusList").appendChild(li);
-    }
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buffer  = "";
 
-    function showError(msg) {
-      const el = document.getElementById("errorMsg");
-      el.textContent = msg;
-      el.style.display = "block";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop(); // keep incomplete chunk
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const evt = JSON.parse(line.slice(6));
+
+          // Determine display status
+          let displayStatus = evt.status;
+          if (evt.status === "done" && evt.message && evt.message.toLowerCase().includes("skip")) {
+            displayStatus = "skipped";
+          }
+
+          setAgentState(evt.agent, displayStatus, evt.message);
+
+          // Final event — show download button only
+          if (evt.final) {
+            if (evt.cover_letter_url) {
+              downloadBtn.href = evt.cover_letter_url;
+              resultArea.style.display = "block";
+            }
+            emailStatus.style.display = "none";
+          }
+        }
+      }
+
+    } catch (err) {
+      showError("Error: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btnSpinner.style.display = "none";
+      btnText.textContent = "Generate & Send Application";
+      stopTimer();
     }
-  </script>
+  }
+
+  function showError(msg) {
+    const el = document.getElementById("errorMsg");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+</script>
 </body>
 </html>
