@@ -52,6 +52,7 @@ def scraper_agent(state: dict) -> dict:
 
 def cover_letter_agent(state: dict) -> dict:
     """Generate a tailored cover letter from JD text + resume text."""
+    import re
     llm = get_llm()
     messages = [
         SystemMessage(content=COVER_LETTER_SYSTEM_PROMPT),
@@ -66,7 +67,13 @@ Write the tailored cover letter now following all rules exactly.
 """),
     ]
     response = llm.invoke(messages)
-    state["cover_letter_text"] = response.content.strip()
+    text = response.content.strip()
+
+    # Post-process: enforce "To," on its own line
+    # Fix "To, Company Name" → "To,\nCompany Name"
+    text = re.sub(r'^To,\s+', 'To,\n', text, flags=re.MULTILINE)
+
+    state["cover_letter_text"] = text
     return state
 
 

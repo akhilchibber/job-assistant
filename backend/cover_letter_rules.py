@@ -25,6 +25,21 @@ where `<###>` is the zero-padded three-digit S.No. that matches the `#` column i
 
 **3. Company addressing format.** Make sure you address the Cover Letter to the company in which we are applying for the Job based on the Job Description. I repeat, it is very important to start the cover letter by addressing it to the company, information about which is something which you can extract from the Job Description. Also ensure that it should be in a proper format such that the first line should only have "To," and the further lines should have the company name and address ensuring that the full address is not coming in one line but multiple lines as per standard format.
 
+**CRITICAL FORMAT EXAMPLE:**
+```
+To,
+European Technology Platform
+Amsterdam
+Netherlands
+```
+
+**WRONG FORMAT (DO NOT DO THIS):**
+```
+To, European Technology Platform Amsterdam
+```
+
+The word "To," MUST be on its own line with a comma, followed by a line break, then the company name on the next line.
+
 **4. Tailoring source.** Make sure that you tailor the Cover Letter based on both (i) The Job Description, and (ii) My Resume. Having said that, please make sure that you do not include things in the Cover Letter which have no relation at all with my Resume / Work Experience. Our goal here while writing the Cover Letter is to convince the Hiring Manager that our Profile is a match based on the Job Description.
 
 **5. No filler language.** Make sure you do not write unnecessary cheesy english words in the Cover Letter just for the sake of writing.
@@ -47,7 +62,7 @@ where `<###>` is the zero-padded three-digit S.No. that matches the `#` column i
 
 **14. No follow-up questions.** Considering I have provided you all the rules, make the cover letter accordingly and don't ask me more questions.
 
-**16. One page maximum.** The cover letter must not exceed one page when rendered as a PDF. Keep the total length concise enough to fit on a single A4 page. If the draft is too long, trim the body paragraphs — do not reduce font size or margins to force it to fit.
+**16. One page maximum.** The cover letter must not exceed one page when rendered as a PDF. Keep the total length concise enough to fit on a single A4 page. This means the entire cover letter text including the address block, date, salutation, body paragraphs, and sign-off must be short enough to fit on one A4 page. Aim for a maximum of 2500 characters total in the cover letter text. If the draft is too long, trim the body paragraphs — do not reduce font size or margins to force it to fit.
 
 **15. Free-text fallback when no cover letter upload exists.** Sometimes while applying for Jobs there may be no option to send a cover letter; instead the application form only offers a free-text field labelled something like "Anything you want to share". In those cases, write the cover letter directly into that text field instead of (or in addition to) attempting a PDF upload. Be smart about it — the first priority is always to upload the PDF of the cover letter. Use the free-text field only as a fallback. When pasting into a free-text field, the same content rules (1 through 14) still apply: same opening "To," + address, same date, same salutation, same four-paragraph structure, no dashes, etc. Adapt formatting where needed so it reads cleanly as a plain-text block in the form.
 
@@ -57,7 +72,7 @@ where `<###>` is the zero-padded three-digit S.No. that matches the `#` column i
 
 Before saving the PDF, confirm in order:
 
-1. Opens with `To,` on its own line, followed by the company name and a multi-line address.
+1. Opens with `To,` on its own line (just the word "To," and nothing else on that line), followed by the company name on the next line, then address on subsequent lines. NEVER write "To, Company Name" on the same line.
 2. Date appears after the company address block.
 3. Salutation is `Dear, <Name>,` using a name extracted from the Job Description, OR `Dear Hiring Manager,` only if no name was findable.
 4. Body is at most four paragraphs; no paragraph is shorter than 250 characters.
@@ -72,7 +87,7 @@ Before saving the PDF, confirm in order:
 13. Saved as `<###> - Cover Letter - <Company> - <Role>.pdf` (3-digit S.No. matching the tracker `#` column) in `~/Documents/Job-Hunting/Cover Letters/`.
 14. Logged in `Application Tracker.xlsx` (or remind Rishika to log it).
 15. If the form has no cover letter upload field, the cover letter content was pasted into the form's free-text field with all the same content rules applied.
-16. Cover letter fits on one page when rendered as a PDF. If too long, body paragraphs were trimmed — font size and margins were not altered.
+16. Cover letter total text is under 2500 characters and fits on one page when rendered as a PDF. If too long, body paragraphs were trimmed — font size and margins were not altered.
 
 If any check fails, fix the cover letter before delivering it.
 
