@@ -35,8 +35,8 @@ def scraper_agent(state: dict) -> dict:
         for tag in soup(["script", "style", "nav", "footer", "header"]):
             tag.decompose()
         text = soup.get_text(separator="\n", strip=True)
-        # Trim to ~6000 chars to stay within LLM context
-        state["jd_text"] = text[:6000]
+        # Trim to ~10000 chars to stay within LLM context while capturing full page
+        state["jd_text"] = text[:10000]
         state["scrape_status"] = "success"
     except Exception as e:
         # Preserve any existing jd_text — don't blank it out on error
@@ -75,38 +75,77 @@ Write the tailored cover letter now following all rules exactly.
 # ---------------------------------------------------------------------------
 
 CONTACT_EXTRACTOR_SYSTEM_PROMPT = """You are an expert at extracting contact information from job postings.
-Extract the hiring manager's name and email address from the job description text.
+Extract the recruiter or hiring manager's name and email address from the job description text.
 
 Rules:
+- Search the ENTIRE text carefully — emails can appear anywhere: in the header, footer, "how to apply", "contact us", "questions?" or "apply to" sections
+- Look for any email pattern like word@domain.extension anywhere in the text
+- The email may belong to a recruiter, HR contact, hiring manager, or general applications inbox
 - Return ONLY a JSON object with keys: "name" and "email"
-- If name is not found, set "name" to null
-- If email is not found, set "email" to null
-- Do not guess or fabricate — only extract what is explicitly present
+- For "name": extract the person's name associated with the email if present, otherwise null
+- For "email": extract the email address if found ANYWHERE in the text, otherwise null
+- Do not guess or fabricate — only extract what is explicitly present in the text
 - Example output: {"name": "Jane Smith", "email": "jane@company.com"}"""
 
 
 def contact_extractor_agent(state: dict) -> dict:
     """Extract hiring manager name and email from JD text."""
+    import re
     import json
-    llm = get_llm()
-    messages = [
-        SystemMessage(content=CONTACT_EXTRACTOR_SYSTEM_PROMPT),
-        HumanMessage(content=f"JOB DESCRIPTION:\n{state['jd_text']}"),
-    ]
-    response = llm.invoke(messages)
-    try:
-        raw = response.content.strip()
-        # Handle markdown code blocks if LLM wraps in ```json
-        if raw.startswith("```"):
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
-        contact = json.loads(raw.strip())
-        state["hiring_manager_name"] = contact.get("name")
-        state["hiring_manager_email"] = contact.get("email")
-    except Exception:
-        state["hiring_manager_name"] = None
-        state["hiring_manager_email"] = None
+
+    jd_text = state.get("jd_text", "")
+
+    # Step 1: Regex scan the full JD text for any email address — fast and format-agnostic
+    emails_found = re.findall(r'[a-zA-Z0-9._%+]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}', jd_text)
+    # Filter out common noise (image files, generic noreply etc.)
+    noise = {"noreply", "no-reply", "donotreply", "example", "test"}
+    emails_found = [e for e in emails_found if not any(n in e.lower() for n in noise)]
+
+    if emails_found:
+        # Use the first real email found
+        extracted_email = emails_found[0]
+        # Step 2: Ask LLM only to find the name associated with this email
+        llm = get_llm()
+        messages = [
+            SystemMessage(content="""You are extracting a person's name from a job posting.
+A specific email address has already been found. Your only job is to find the person's name associated with that email in the text.
+Return ONLY a JSON object: {"name": "Full Name"} or {"name": null} if no name is found near the email.
+Do not return anything else."""),
+            HumanMessage(content=f"Email found: {extracted_email}\n\nJOB DESCRIPTION:\n{jd_text[:4000]}"),
+        ]
+        response = llm.invoke(messages)
+        try:
+            raw = response.content.strip()
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            result = json.loads(raw.strip())
+            state["hiring_manager_name"] = result.get("name")
+        except Exception:
+            state["hiring_manager_name"] = None
+        state["hiring_manager_email"] = extracted_email
+    else:
+        # Step 3: No email found by regex — ask LLM to try harder with full text
+        llm = get_llm()
+        messages = [
+            SystemMessage(content=CONTACT_EXTRACTOR_SYSTEM_PROMPT),
+            HumanMessage(content=f"JOB DESCRIPTION:\n{jd_text}"),
+        ]
+        response = llm.invoke(messages)
+        try:
+            raw = response.content.strip()
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            contact = json.loads(raw.strip())
+            state["hiring_manager_name"] = contact.get("name")
+            state["hiring_manager_email"] = contact.get("email")
+        except Exception:
+            state["hiring_manager_name"] = None
+            state["hiring_manager_email"] = None
+
     return state
 
 
