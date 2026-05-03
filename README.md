@@ -151,3 +151,11 @@ job-assistant/
 │   └── index.html           # GitHub Pages UI
 └── PROJECT.md
 ```
+
+---
+
+## Live Demo
+
+**Frontend (GitHub Pages):** https://akhilchibber.github.io/job-assistant/
+
+**Backend (Hugging Face Spaces):** https://akhilchibber-job-assistant.hf.space/
