@@ -129,8 +129,8 @@ Frontend (GitHub Pages): PDF download button + status message
 4. ✅ **PDF Export** — ReportLab utility renders cover letter text to styled PDF, uploads to Supabase Storage, returns public URL
 5. ✅ **Supervisor Agent** — LangGraph Supervisor node wires all sub-agents, handles conditional routing (email found / not found)
 6. ✅ **Backend** — FastAPI `POST /generate` triggers the Supervisor; returns PDF URL + email status
-7. **Frontend** — Single `index.html` on GitHub Pages: URL input → calls backend → shows download link + status
-8. **Deploy** — Backend to Hugging Face Spaces (Docker), frontend to GitHub Pages, all secrets in env vars
+7. ✅ **Frontend** — Single `index.html` on GitHub Pages: URL input → calls backend → shows download link + status
+8. ✅ **Deploy** — Backend to Hugging Face Spaces (Docker), frontend to GitHub Pages, all secrets in env vars
 
 ---
 
