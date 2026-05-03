@@ -4,13 +4,16 @@ from bs4 import BeautifulSoup
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage
 
+from cover_letter_rules import COVER_LETTER_SYSTEM_PROMPT
+
+
 # ---------------------------------------------------------------------------
 # Shared LLM instance
 # ---------------------------------------------------------------------------
 
 def get_llm():
     return ChatGroq(
-        model="llama3-70b-8192",
+        model=os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile"),
         api_key=os.environ["GROQ_API_KEY"],
         temperature=0.3,
     )
@@ -45,21 +48,6 @@ def scraper_agent(state: dict) -> dict:
 # Cover Letter Agent
 # ---------------------------------------------------------------------------
 
-COVER_LETTER_SYSTEM_PROMPT = """You are an expert career coach and professional writer.
-Your task is to write a tailored, compelling cover letter based on the job description and the candidate's resume.
-
-Rules:
-- Address the hiring manager by name if found in the JD, otherwise use "Hiring Manager"
-- Match the exact job title and company name from the JD
-- Mirror keywords and required skills from the job description naturally
-- Highlight only the resume experience most relevant to this specific role
-- Keep tone professional yet personable
-- Length: exactly 3 paragraphs, fits on one page
-- Open with a strong hook referencing the specific role and company
-- Do NOT include any placeholder text like [Your Name] — use the candidate's actual details from the resume
-- Output only the cover letter text, no extra commentary"""
-
-
 def cover_letter_agent(state: dict) -> dict:
     """Generate a tailored cover letter from JD text + resume text."""
     llm = get_llm()
@@ -72,7 +60,7 @@ JOB DESCRIPTION:
 CANDIDATE RESUME:
 {state['resume_text']}
 
-Write the tailored cover letter now.
+Write the tailored cover letter now following all rules exactly.
 """),
     ]
     response = llm.invoke(messages)
@@ -105,7 +93,6 @@ def contact_extractor_agent(state: dict) -> dict:
     ]
     response = llm.invoke(messages)
     try:
-        # Parse JSON from LLM response
         raw = response.content.strip()
         # Handle markdown code blocks if LLM wraps in ```json
         if raw.startswith("```"):
@@ -130,7 +117,7 @@ Write a concise, professional email to accompany a job application.
 
 Rules:
 - Subject line: clear and specific, mention the role
-- Body: 3–4 sentences max — introduce the candidate, mention the role, note attachments
+- Body: 3 to 4 sentences max — introduce the candidate, mention the role, note attachments
 - Warm but professional tone
 - Return ONLY a JSON object with keys: "subject" and "body"
 - Example: {"subject": "Application for Senior Engineer Role", "body": "Dear Jane, ..."}"""
@@ -151,8 +138,7 @@ Job Description Summary:
 {state['jd_text'][:1500]}
 
 Hiring Manager Name: {manager_name}
-Candidate Name (from resume): extract from resume text below
-Resume Text: {state['resume_text'][:500]}
+Resume Text (first 500 chars): {state['resume_text'][:500]}
 
 Draft the application email now.
 """),
@@ -169,7 +155,7 @@ Draft the application email now.
         body = email_content.get("body", "")
     except Exception:
         subject = "Job Application"
-        body = f"Dear {manager_name},\n\nPlease find my resume and cover letter attached.\n\nBest regards"
+        body = f"Dear {manager_name},\n\nPlease find my resume and cover letter attached.\n\nBest regards,\nRishika Saini"
 
     try:
         send_application_email(
