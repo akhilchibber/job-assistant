@@ -42,7 +42,7 @@ def generate(req: GenerateRequest):
 
     initial_state = {
         "job_url": req.job_url,
-        "sender_email": req.sender_email,
+        "sender_email": req.sender_email or "rishika3895@gmail.com",
         "status_log": [],
     }
 
