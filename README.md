@@ -1,4 +1,7 @@
 # AI-Powered Job Application Assistant
+<p align="center">
+  <img src="https://github.com/akhilchibber/job-assistant/blob/main/Job-Auto-Apply.png?raw=true" alt="earthml Logo">
+</p>
 
 ## Scope
 User provides a **job posting URL** → Supervisor Agent orchestrates the pipeline →
