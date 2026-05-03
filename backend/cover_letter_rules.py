@@ -47,6 +47,8 @@ where `<###>` is the zero-padded three-digit S.No. that matches the `#` column i
 
 **14. No follow-up questions.** Considering I have provided you all the rules, make the cover letter accordingly and don't ask me more questions.
 
+**16. One page maximum.** The cover letter must not exceed one page when rendered as a PDF. Keep the total length concise enough to fit on a single A4 page. If the draft is too long, trim the body paragraphs — do not reduce font size or margins to force it to fit.
+
 **15. Free-text fallback when no cover letter upload exists.** Sometimes while applying for Jobs there may be no option to send a cover letter; instead the application form only offers a free-text field labelled something like "Anything you want to share". In those cases, write the cover letter directly into that text field instead of (or in addition to) attempting a PDF upload. Be smart about it — the first priority is always to upload the PDF of the cover letter. Use the free-text field only as a fallback. When pasting into a free-text field, the same content rules (1 through 14) still apply: same opening "To," + address, same date, same salutation, same four-paragraph structure, no dashes, etc. Adapt formatting where needed so it reads cleanly as a plain-text block in the form.
 
 ---
@@ -70,6 +72,7 @@ Before saving the PDF, confirm in order:
 13. Saved as `<###> - Cover Letter - <Company> - <Role>.pdf` (3-digit S.No. matching the tracker `#` column) in `~/Documents/Job-Hunting/Cover Letters/`.
 14. Logged in `Application Tracker.xlsx` (or remind Rishika to log it).
 15. If the form has no cover letter upload field, the cover letter content was pasted into the form's free-text field with all the same content rules applied.
+16. Cover letter fits on one page when rendered as a PDF. If too long, body paragraphs were trimmed — font size and margins were not altered.
 
 If any check fails, fix the cover letter before delivering it.
 
