@@ -6,11 +6,16 @@ from email.mime.base import MIMEBase
 from email import encoders
 
 from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 
 def _build_gmail_service():
-    """Build Gmail API service using OAuth2 credentials from env vars."""
+    """Build Gmail API service using OAuth2 credentials from env vars.
+    
+    Automatically refreshes the access token if it has expired or is invalid,
+    using the refresh token stored in the environment variables.
+    """
     creds = Credentials(
         token=os.environ["GMAIL_TOKEN"],
         refresh_token=os.environ["GMAIL_REFRESH_TOKEN"],
@@ -18,6 +23,17 @@ def _build_gmail_service():
         client_id=os.environ["GMAIL_CLIENT_ID"],
         client_secret=os.environ["GMAIL_CLIENT_SECRET"],
     )
+
+    # Refresh the access token if it is expired or invalid
+    if not creds.valid:
+        if creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            raise RuntimeError(
+                "Gmail access token is expired/revoked and no refresh token is available. "
+                "Please re-authenticate and update GMAIL_TOKEN and GMAIL_REFRESH_TOKEN in your .env file."
+            )
+
     return build("gmail", "v1", credentials=creds)
 
 
