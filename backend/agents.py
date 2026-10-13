@@ -1,21 +1,26 @@
 import os
 import requests
 from bs4 import BeautifulSoup
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from cover_letter_rules import COVER_LETTER_SYSTEM_PROMPT
 
 
 # ---------------------------------------------------------------------------
-# Shared LLM instance
+# Shared LLM instance (OpenRouter)
 # ---------------------------------------------------------------------------
 
 def get_llm():
-    return ChatGroq(
-        model=os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile"),
-        api_key=os.environ["GROQ_API_KEY"],
+    return ChatOpenAI(
+        model=os.environ.get("OPENROUTER_MODEL", "openai/gpt-4o-mini"),
+        api_key=os.environ["OPENROUTER_API_KEY"],
+        base_url="https://openrouter.ai/api/v1",
         temperature=0.3,
+        default_headers={
+            "HTTP-Referer": "https://akhilchibber.github.io/job-assistant/",
+            "X-Title": "AI Job Application Assistant",
+        },
     )
 
 

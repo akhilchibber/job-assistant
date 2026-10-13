@@ -22,7 +22,7 @@ app.add_middleware(
 # Required environment variables — fail fast if any are missing
 # ---------------------------------------------------------------------------
 REQUIRED_ENV_VARS = [
-    "GROQ_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_URL",
     "SUPABASE_KEY",
     "SUPABASE_SERVICE_KEY",
