@@ -46,7 +46,7 @@ def check_env():
 
 class GenerateRequest(BaseModel):
     job_url: str
-    sender_email: str = "rishika3895@gmail.com"
+    sender_email: str = "akhil.chibber@gmail.com"
 
 
 class GenerateResponse(BaseModel):
