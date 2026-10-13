@@ -13,7 +13,7 @@ from cover_letter_rules import COVER_LETTER_SYSTEM_PROMPT
 
 def get_llm():
     return ChatOpenAI(
-        model=os.environ.get("OPENROUTER_MODEL", "openai/gpt-4o-mini"),
+        model=os.environ.get("OPENROUTER_MODEL", "openai/gpt-4.1-mini"),
         api_key=os.environ["OPENROUTER_API_KEY"],
         base_url="https://openrouter.ai/api/v1",
         temperature=0.3,
