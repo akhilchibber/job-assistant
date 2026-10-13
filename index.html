@@ -360,6 +360,9 @@
 
           setAgentState(evt.agent, evt.status, evt.message);
 
+          // Force a repaint so the browser renders each update immediately
+          await new Promise(resolve => setTimeout(resolve, 0));
+
           // Final event — show results
           if (evt.final) {
             if (evt.cover_letter_url) {

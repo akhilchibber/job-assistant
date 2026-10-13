@@ -157,6 +157,7 @@ def stream(req: GenerateRequest):
                     status = "skipped" if "skip" in message.lower() else "done"
 
                     yield f"data: {json.dumps({'agent': agent_key, 'status': status, 'message': message})}\n\n"
+                    yield ": keep-alive\n\n"  # flush padding
 
                     # Emit next agent as running (preview)
                     node_order = list(NODE_TO_AGENT.keys())
@@ -164,6 +165,7 @@ def stream(req: GenerateRequest):
                     if idx >= 0 and idx + 1 < len(node_order):
                         next_agent = NODE_TO_AGENT[node_order[idx + 1]]
                         yield f"data: {json.dumps({'agent': next_agent, 'status': 'running', 'message': 'Processing...'})}\n\n"
+                        yield ": keep-alive\n\n"  # flush padding
 
                     # Track final state
                     final_state.update(node_state)
@@ -175,6 +177,7 @@ def stream(req: GenerateRequest):
             cover_letter_url = final_state.get("cover_letter_url", "")
             email_status = final_state.get("email_status", "not attempted")
             yield f"data: {json.dumps({'agent': 'supervisor', 'status': 'done', 'message': 'Pipeline complete', 'final': True, 'cover_letter_url': cover_letter_url, 'email_status': email_status})}\n\n"
+            yield ": keep-alive\n\n"
 
         except Exception as e:
             yield f"data: {json.dumps({'agent': 'supervisor', 'status': 'error', 'message': str(e), 'final': True})}\n\n"
