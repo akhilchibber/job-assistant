@@ -300,7 +300,7 @@
   }
 
   // -----------------------------------------------------------------------
-  // Main generate function — calls /generate endpoint
+  // Main generate function — uses SSE /stream endpoint for live agent updates
   // -----------------------------------------------------------------------
   async function generate() {
     const jobUrl      = document.getElementById("jobUrl").value.trim();
@@ -320,10 +320,9 @@
     if (!jobUrl)      { showError("Please paste a job posting URL."); return; }
     if (!senderEmail) { showError("Please enter your email address."); return; }
 
-    // Build pipeline UI and mark all as running
+    // Build pipeline UI
     buildPipelineCards();
     document.getElementById("pipelineSection").style.display = "block";
-    AGENT_ORDER.forEach(a => setAgentState(a.key, "running", "Processing..."));
 
     // Loading state
     btn.disabled = true;
@@ -332,7 +331,7 @@
     startTimer();
 
     try {
-      const res = await fetch(`${BACKEND_URL}/generate`, {
+      const res = await fetch(`${BACKEND_URL}/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ job_url: jobUrl, sender_email: senderEmail }),
@@ -343,32 +342,39 @@
         throw new Error(err.detail || "Server error");
       }
 
-      const data = await res.json();
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buffer  = "";
 
-      // Mark all agents done based on status_log
-      AGENT_ORDER.forEach(a => {
-        const logEntry = (data.status_log || []).find(l => l.toLowerCase().includes(a.key.replace("_", " ")));
-        if (logEntry && logEntry.toLowerCase().includes("skip")) {
-          setAgentState(a.key, "skipped", logEntry);
-        } else {
-          setAgentState(a.key, "done", logEntry || "Completed");
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const evt = JSON.parse(line.slice(6));
+
+          setAgentState(evt.agent, evt.status, evt.message);
+
+          // Final event — show results
+          if (evt.final) {
+            if (evt.cover_letter_url) {
+              downloadBtn.href = evt.cover_letter_url;
+              resultArea.style.display = "block";
+            }
+            if (evt.email_status) {
+              emailStatus.textContent = "📧 Email: " + evt.email_status;
+              emailStatus.style.display = "block";
+            }
+          }
         }
-      });
-
-      // Show download button
-      if (data.cover_letter_url) {
-        downloadBtn.href = data.cover_letter_url;
-        resultArea.style.display = "block";
-      }
-
-      // Show email status
-      if (data.email_status) {
-        emailStatus.textContent = "📧 Email: " + data.email_status;
-        emailStatus.style.display = "block";
       }
 
     } catch (err) {
-      AGENT_ORDER.forEach(a => setAgentState(a.key, "error", "Failed"));
       showError("Error: " + err.message);
     } finally {
       btn.disabled = false;
