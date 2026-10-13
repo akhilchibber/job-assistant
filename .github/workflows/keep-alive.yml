@@ -1,0 +1,32 @@
+name: Supabase Keep-Alive Ping
+
+on:
+  schedule:
+    # Runs every 2 days at 08:00 UTC (every other day)
+    - cron: '0 8 */2 * *'
+  workflow_dispatch: # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  ping:
+    name: Ping Supabase to prevent free-tier pause
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send keep-alive ping to Supabase
+        run: |
+          echo "Pinging Supabase project akhil.chibber3@gmail.com's Project (hxslxezgedbsrgahzuxy)..."
+
+          HTTP_STATUS=$(curl --silent --output /dev/null \
+            --write-out "%{http_code}" \
+            --request GET \
+            --url "${{ secrets.SUPABASE_URL }}/auth/v1/health" \
+            --header "apikey: ${{ secrets.SUPABASE_ANON_KEY }}")
+
+          echo "HTTP Status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ Supabase ping successful — project is active."
+          else
+            echo "❌ Ping failed with status $HTTP_STATUS"
+            exit 1
+          fi
